@@ -19,8 +19,8 @@ export default function Footer() {
       title: 'Platform',
       links: [
         { label: 'Discover Swaps', href: '/explore' },
-        { label: 'Startup Missions', href: '/missions' },
-        { label: 'Mentorship Hub', href: '/mentors' },
+        { label: 'Success Stories', href: '/success-stories' },
+        { label: 'Mentorship Hub', href: '/mentorship-hub' },
         { label: 'Community', href: '/community' },
       ]
     },
@@ -29,7 +29,7 @@ export default function Footer() {
       links: [
         { label: 'Login', href: '/login' },
         { label: 'Register', href: '/signup' },
-        { label: 'Become a Mentor', href: '/become-mentor' },
+        { label: 'TPO Registration', href: '/tpo-registration' },
         { label: 'Startup Access', href: '/startup-access' },
       ]
     },

@@ -63,7 +63,7 @@ export default function SignupPage() {
       email, 
       password,
       options: { 
-        data: { full_name: name },
+        data: { full_name: name, role: role },
         emailRedirectTo: `${window.location.origin}/auth/callback`
       }
     })
@@ -82,24 +82,10 @@ export default function SignupPage() {
         email 
       })
 
-      // Send verification email via API
-      try {
-        await fetch('/api/email/verify', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email,
-            name,
-            verificationLink: `${window.location.origin}/auth/callback`
-          })
-        })
-      } catch (err) {
-        console.error('Email failed:', err)
-      }
     }
 
     toast.success('Check your email to verify!')
-    router.push('/onboarding')
+    router.push('/verify-email')
   }
 
   return (

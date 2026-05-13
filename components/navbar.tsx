@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Bell, Menu, X, ChevronDown, User, LayoutDashboard, Bookmark, Settings, LogOut, MessageSquare } from 'lucide-react'
 
 export default function Navbar() {
-  const { profile, loading, signOut } = useAuth()
+  const { user, profile, loading, signOut } = useAuth()
   const [scrolled, setScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false)
@@ -28,29 +28,31 @@ export default function Navbar() {
   }, [pathname])
 
   const GUEST_LINKS = [
-    { label: 'Discover Swaps', href: '/explore' },
-    { label: 'Join Startups', href: '/startups' },
-    { label: 'Find Mentors', href: '/mentors' },
-    { label: 'Success Stories', href: '/stories' },
+    { label: 'Vision', href: '/vision' },
+    { label: 'Community', href: '/community' },
+    { label: 'Stories', href: '/success-stories' },
+    { label: 'Mentors', href: '/mentorship-hub' },
+    { label: 'Careers', href: '/careers' },
   ]
 
   const AUTH_LINKS = [
-    { label: 'Discover Swaps', href: '/explore' },
-    { label: 'Startup Missions', href: '/missions' },
-    { label: 'Mentorship Hub', href: '/mentors' },
+    { label: 'Explore', href: '/explore' },
+    { label: 'Post Project', href: '/post' },
+    { label: 'Mentors', href: '/mentorship-hub' },
     { label: 'Dashboard', href: '/dashboard' },
+    { label: 'Vision', href: '/vision' },
   ]
 
-  const navLinks = profile ? AUTH_LINKS : GUEST_LINKS
+  const navLinks = user ? AUTH_LINKS : GUEST_LINKS
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
       scrolled ? 'py-3 bg-white/80 backdrop-blur-xl border-b border-gray-200/50 shadow-sm' : 'py-5 bg-transparent'
     }`}>
-      <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+      <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
         
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 group">
+        <Link href={profile ? "/explore" : "/"} className="flex items-center gap-3 group">
           <div className="w-10 h-10 bg-gray-900 rounded-2xl flex items-center justify-center group-hover:rotate-6 transition-transform duration-300 shadow-lg shadow-gray-900/20">
             <span className="text-white font-black text-xl italic">S</span>
           </div>
@@ -78,7 +80,7 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-4">
           {loading ? (
             <div className="w-10 h-10 bg-gray-100 rounded-full animate-pulse" />
-          ) : profile ? (
+          ) : user ? (
             <div className="flex items-center gap-3">
               <Link href="/messages" className="p-2.5 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-all relative">
                 <MessageSquare size={20} />
@@ -91,18 +93,12 @@ export default function Navbar() {
               <div className="relative">
                 <button 
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                  className="flex items-center gap-2 pl-2 pr-1 py-1 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-2xl transition-all group"
+                  className="flex items-center gap-2 p-1 rounded-2xl hover:bg-gray-100 transition-all border border-transparent hover:border-gray-200 group"
                 >
-                  <div className="w-8 h-8 rounded-xl bg-gray-200 overflow-hidden shadow-inner">
-                    {profile.avatar_url ? (
-                      <Image src={profile.avatar_url} alt="" width={32} height={32} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">
-                        <User size={16} />
-                      </div>
-                    )}
+                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-gray-900 to-gray-700 flex items-center justify-center text-white font-black text-xs shadow-lg shadow-gray-900/10 group-hover:scale-105 transition-transform">
+                    {profile?.name?.[0] || user?.email?.[0]?.toUpperCase() || 'U'}
                   </div>
-                  <ChevronDown size={14} className={`text-gray-400 transition-transform duration-300 ${profileDropdownOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`text-gray-400 group-hover:text-gray-900 transition-all ${profileDropdownOpen ? 'rotate-180' : ''}`} size={16} />
                 </button>
 
                 <AnimatePresence>
@@ -114,12 +110,12 @@ export default function Navbar() {
                       className="absolute right-0 mt-3 w-64 bg-white border border-gray-200 rounded-[2rem] shadow-2xl shadow-gray-200/50 p-2 z-50"
                     >
                       <div className="px-4 py-3 border-b border-gray-50 mb-1">
-                        <p className="text-sm font-black text-gray-900 truncate">{profile.name}</p>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">{profile.role}</p>
+                        <p className="text-sm font-black text-gray-900 truncate">{profile?.name || user?.email}</p>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">{profile?.role || 'User'}</p>
                       </div>
                       
                       <div className="space-y-1">
-                        <DropdownItem icon={<User size={16} />} label="My Profile" href={`/profile/${profile.id}`} />
+                        {profile?.id && <DropdownItem icon={<User size={16} />} label="My Profile" href={`/profile/${profile.id}`} />}
                         <DropdownItem icon={<LayoutDashboard size={16} />} label="Dashboard" href="/dashboard" />
                         <DropdownItem icon={<Bookmark size={16} />} label="Saved Opportunities" href="/saved" />
                         <DropdownItem icon={<Settings size={16} />} label="Settings" href="/settings" />
@@ -142,10 +138,10 @@ export default function Navbar() {
           ) : (
             <div className="flex items-center gap-3">
               <Link href="/login" className="px-6 py-2.5 text-sm font-bold text-gray-600 hover:text-gray-900 transition-all">
-                Login
+                Sign in
               </Link>
               <Link href="/signup" className="px-6 py-2.5 text-sm font-black text-white bg-gray-900 rounded-2xl hover:scale-105 active:scale-95 transition-all shadow-lg shadow-gray-900/20">
-                Join Community
+                Join Free
               </Link>
             </div>
           )}

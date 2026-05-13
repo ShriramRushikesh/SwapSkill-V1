@@ -15,6 +15,8 @@ export interface Profile {
   linkedin_url: string | null
   is_verified: boolean
   verification_status: VerificationStatus
+  reputation_score?: number
+  credits?: number
   swap_count?: number
   created_at: string
 }
@@ -79,7 +81,7 @@ export interface TpoPost {
   profiles?: Profile
 }
 
-export interface Notification {
+export interface AppNotification {
   id: string
   user_id: string
   type: string

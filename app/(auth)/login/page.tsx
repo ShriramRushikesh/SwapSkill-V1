@@ -1,12 +1,9 @@
 'use client'
-
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { toast } from 'sonner'
-import { motion } from 'framer-motion'
-import { Mail, Lock, Chrome, Linkedin, ArrowRight } from 'lucide-react'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -17,120 +14,79 @@ export default function LoginPage() {
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
+    if (!email || !password) { toast.error('Enter email and password'); return }
     setLoading(true)
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password: password
+    })
+    
     if (error) {
       toast.error(error.message)
       setLoading(false)
       return
     }
-    router.push('/dashboard')
+    
+    toast.success('Logged in!')
+    router.push('/explore')
     router.refresh()
   }
 
-  async function handleOAuth(provider: 'google' | 'linkedin_oidc') {
-    await supabase.auth.signInWithOAuth({
-      provider,
-      options: { redirectTo: `${window.location.origin}/auth/callback` }
+  async function handleGoogle() {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`
+      }
     })
+    if (error) toast.error(error.message)
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 relative overflow-hidden pt-20">
-      {/* Background elements */}
-      <div className="absolute top-1/4 -left-20 w-96 h-96 bg-gray-50 rounded-full blur-[120px] opacity-60" />
-      <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-brand-border rounded-full blur-[120px] opacity-60" />
-
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md relative z-10"
-      >
-        <div className="bg-white border border-gray-100 shadow-2xl shadow-gray-200/50 rounded-[2.5rem] p-10 md:p-14">
-          <div className="text-center mb-10">
-            <div className="w-16 h-16 bg-gray-900 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-gray-900/20 rotate-3">
-              <span className="text-white font-black text-2xl italic">S</span>
-            </div>
-            <h1 className="text-3xl font-black text-gray-900 tracking-tighter mb-2">Welcome Back</h1>
-            <p className="text-gray-400 font-bold text-xs uppercase tracking-widest">Sign in to scale your future</p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 mb-8">
-            <OAuthButton 
-              onClick={() => handleOAuth('google')} 
-              icon={<Chrome size={18} />} 
-              label="Google" 
-            />
-            <OAuthButton 
-              onClick={() => handleOAuth('linkedin_oidc')} 
-              icon={<Linkedin size={18} />} 
-              label="LinkedIn" 
-            />
-          </div>
-
-          <div className="relative mb-8">
-            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-100" /></div>
-            <div className="relative flex justify-center text-[10px] uppercase font-black tracking-widest">
-              <span className="bg-white px-4 text-gray-300">or use email</span>
-            </div>
-          </div>
-
-          <form onSubmit={handleLogin} className="space-y-5">
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Email</label>
-              <div className="relative group">
-                <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-gray-900 transition-colors" size={18} />
-                <input 
-                  type="email" required value={email} onChange={e => setEmail(e.target.value)}
-                  placeholder="alex@example.com"
-                  className="w-full pl-14 pr-6 py-4 bg-gray-50/50 border-2 border-transparent rounded-2xl outline-none focus:bg-white focus:border-gray-900 transition-all font-bold text-sm"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex justify-between items-center ml-1">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Password</label>
-                <Link href="/forgot-password" className="text-[10px] font-black text-gray-900 uppercase tracking-widest hover:underline">Forgot?</Link>
-              </div>
-              <div className="relative group">
-                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-gray-900 transition-colors" size={18} />
-                <input 
-                  type="password" required value={password} onChange={e => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full pl-14 pr-6 py-4 bg-gray-50/50 border-2 border-transparent rounded-2xl outline-none focus:bg-white focus:border-gray-900 transition-all font-bold text-sm"
-                />
-              </div>
-            </div>
-
-            <button 
-              type="submit" disabled={loading}
-              className="w-full py-5 bg-gray-900 text-white rounded-2xl font-black text-sm flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-gray-900/20 disabled:opacity-50 mt-4"
-            >
-              {loading ? 'Authenticating...' : (
-                <>
-                  Sign In <ArrowRight size={18} />
-                </>
-              )}
-            </button>
-          </form>
-
-          <p className="text-center mt-10 text-xs font-bold text-gray-400">
-            New here? <Link href="/signup" className="text-gray-900 underline decoration-2 underline-offset-4 hover:text-gray-700 transition-colors">Create account</Link>
-          </p>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 pt-20">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+        <div className="mb-8">
+          <h1 className="text-2xl font-semibold text-gray-900">Welcome back</h1>
+          <p className="text-gray-500 mt-1 text-sm">Sign in to your SwapSkill account</p>
         </div>
-      </motion.div>
+        
+        <button onClick={handleGoogle} className="w-full flex items-center justify-center gap-3 border border-gray-200 rounded-xl py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition mb-6">
+          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+          Continue with Google
+        </button>
+        
+        <div className="flex items-center gap-3 mb-6">
+          <div className="flex-1 h-px bg-gray-100"/>
+          <span className="text-xs text-gray-400">or</span>
+          <div className="flex-1 h-px bg-gray-100"/>
+        </div>
+        
+        <form onSubmit={handleLogin} className="space-y-4">
+          <div>
+            <label className="text-sm font-medium text-gray-700 block mb-1.5">Email</label>
+            <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition"/>
+          </div>
+          <div>
+            <label className="text-sm font-medium text-gray-700 block mb-1.5">Password</label>
+            <input type="password" required value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition"/>
+          </div>
+          <div className="flex items-center justify-between text-sm">
+            <label className="flex items-center gap-2">
+              <input type="checkbox" className="w-4 h-4 rounded"/>
+              <span className="text-gray-600">Remember me</span>
+            </label>
+            <Link href="/forgot-password" className="text-gray-600 hover:text-gray-900 font-medium">Forgot?</Link>
+          </div>
+          <button type="submit" disabled={loading} className="w-full bg-gray-900 hover:bg-gray-800 text-white rounded-xl py-3 text-sm font-medium transition disabled:opacity-50">
+            {loading ? 'Signing in...' : 'Sign in'}
+          </button>
+        </form>
+        
+        <p className="text-center text-sm text-gray-500 mt-6">
+          Don't have an account? <Link href="/signup" className="text-gray-900 font-medium hover:underline">Create one free</Link>
+        </p>
+      </div>
     </div>
-  )
-}
-
-function OAuthButton({ onClick, icon, label }: { onClick: () => void, icon: React.ReactNode, label: string }) {
-  return (
-    <button 
-      onClick={onClick}
-      className="flex items-center justify-center gap-3 py-4 border-2 border-gray-50 rounded-2xl text-xs font-black text-gray-900 hover:bg-gray-50 hover:border-gray-100 transition-all active:scale-95"
-    >
-      {icon} {label}
-    </button>
   )
 }

@@ -24,6 +24,29 @@ export default function ExploreClient({ posts, currentUserId }: { posts: (SwapPo
 
   return (
     <div className="section-py container-x container-max">
+      {/* Header section */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <div>
+          <h1 className="text-4xl font-black text-gray-900 tracking-tighter mb-2">Explore Projects</h1>
+          <p className="text-gray-500 font-medium">Find the perfect skill swap or mentorship opportunity</p>
+        </div>
+        
+        <div className="flex items-center gap-3">
+          <div className="relative group flex-1 md:w-64">
+            <input 
+              type="text"
+              placeholder="Search projects..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-6 pr-6 py-3.5 bg-white border-2 border-gray-100 rounded-2xl outline-none focus:border-gray-900 transition-all font-bold text-sm shadow-sm"
+            />
+          </div>
+          <Link href="/post" className="bg-gray-900 text-white px-6 py-4 rounded-2xl font-black text-sm hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-gray-900/20 whitespace-nowrap">
+            + Post Project
+          </Link>
+        </div>
+      </div>
+
       {/* Category filters */}
       <div className="flex gap-2 mb-12 overflow-x-auto pb-4 no-scrollbar">
         {CATEGORIES.map(cat => (

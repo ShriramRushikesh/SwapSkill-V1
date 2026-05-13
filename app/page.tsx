@@ -1,123 +1,106 @@
 'use client'
 import { motion, useScroll, useTransform, useInView } from 'framer-motion'
 import Link from 'next/link'
-import { useState, useEffect, useRef } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import { useRef, useState, useEffect } from 'react'
+import { ArrowRight, Zap, Star, ShieldCheck, TrendingUp, Users } from 'lucide-react'
+import { useAuth } from '@/lib/contexts/auth-context'
 
 // ============= SCROLL ANIMATIONS =============
 
-function HeroSection() {
+function HeroSection({ isAuthenticated }: { isAuthenticated: boolean }) {
   const ref = useRef(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end center'] })
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0.3])
   const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95])
 
   return (
-    <motion.section ref={ref} style={{ opacity, scale }} className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-8 pt-20 overflow-hidden bg-white">
-      {/* Animated background */}
+    <motion.section ref={ref} style={{ opacity, scale }} className="relative min-h-[90vh] flex items-center justify-center px-4 sm:px-6 md:px-8 pt-32 pb-20 overflow-hidden bg-white">
+      {/* Premium Background Elements */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <motion.div 
-          className="absolute top-1/4 left-1/4 w-96 h-96 bg-gray-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30"
-          animate={{ y: [0, 100, 0], x: [0, 50, 0] }}
-          transition={{ duration: 15, repeat: Infinity }}
+          className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-indigo-50/40 rounded-full blur-[120px]"
+          animate={{ y: [0, 50, 0], scale: [1, 1.1, 1] }}
+          transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
         />
         <motion.div 
-          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gray-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
-          animate={{ y: [0, -100, 0], x: [0, -50, 0] }}
-          transition={{ duration: 20, repeat: Infinity, delay: 2 }}
+          className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-brand-primary/10 rounded-full blur-[100px]"
+          animate={{ x: [0, -40, 0], scale: [1, 1.05, 1] }}
+          transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
         />
       </div>
 
       <motion.div 
-        className="max-w-5xl mx-auto text-center z-10"
+        className="max-w-5xl mx-auto text-center z-10 space-y-10"
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
+        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
       >
-        {/* Badge */}
+        {/* Floating Badge */}
         <motion.div 
-          className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-full text-xs sm:text-sm font-medium text-gray-700 mb-6"
-          whileHover={{ scale: 1.05 }}
+          className="inline-flex items-center gap-3 px-6 py-2.5 bg-white/50 backdrop-blur-md border border-gray-100 rounded-full shadow-sm"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.5 }}
+          whileHover={{ y: -2 }}
         >
-          <span className="w-2 h-2 bg-gray-900 rounded-full animate-pulse"/>
-          Real Work. Real Growth. Real Impact.
+          <div className="flex -space-x-2">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="w-6 h-6 rounded-full border-2 border-white bg-gray-200" />
+            ))}
+          </div>
+          <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+            Trusted by 500+ Startups
+          </span>
         </motion.div>
 
-        {/* Main Heading with gradient */}
-        <motion.h1 
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-gray-900 mb-6 leading-tight tracking-tight"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-        >
-          Build Real
-          <br className="hidden sm:block"/>
-          <span className="bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 bg-clip-text text-transparent">
-            Experience.
-          </span>
-          <br/>
-          Scale Startups.
-        </motion.h1>
+        {/* Massive Impact Heading */}
+        <div className="space-y-4">
+          <motion.h1 
+            className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black text-gray-900 tracking-tighter leading-[0.85]"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            Build Real <br/>
+            <span className="text-gray-400">Impact.</span>
+          </motion.h1>
+          <motion.div 
+            className="h-1.5 w-32 bg-gray-900 mx-auto rounded-full"
+            initial={{ width: 0 }}
+            animate={{ width: 128 }}
+            transition={{ delay: 0.8, duration: 1 }}
+          />
+        </div>
 
-        {/* Subheading */}
+        {/* Narrative Subheading */}
         <motion.p 
-          className="text-lg sm:text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto mb-10 leading-relaxed"
+          className="text-xl sm:text-2xl text-gray-500 max-w-2xl mx-auto leading-relaxed font-medium"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          transition={{ delay: 0.4 }}
         >
-          Students work on real startup projects instead of dummy assignments. Startups hire affordably without heavy costs. Mentors guide meaningful growth. All through reputation and impact, not money.
+          Exchange dummy assignments for real startup challenges. Built on reputation, verified by impact, scaled for the next generation of Indian talent.
         </motion.p>
 
-        {/* CTA Buttons */}
+        {/* High-Contrast CTAs */}
         <motion.div 
-          className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
+          className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
+          transition={{ delay: 0.6 }}
         >
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Link 
-              href="/signup" 
-              className="inline-flex items-center gap-2 bg-gray-900 hover:bg-gray-800 text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-semibold text-sm sm:text-base transition-all duration-300 shadow-lg hover:shadow-xl"
-            >
-              Start Building Free
-              <motion.span animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
-                →
-              </motion.span>
-            </Link>
-          </motion.div>
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Link 
-              href="#how-it-works"
-              className="inline-flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-900 border-2 border-gray-200 px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-semibold text-sm sm:text-base transition-all duration-300"
-            >
-              See How It Works
-            </Link>
-          </motion.div>
-        </motion.div>
-
-        {/* Stats */}
-        <motion.div 
-          className="grid grid-cols-3 gap-4 sm:gap-6 md:gap-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-        >
-          {[
-            { number: '1000+', label: 'Students & Professionals' },
-            { number: '150+', label: 'Projects Posted' },
-            { number: '45+', label: 'Completed Swaps' }
-          ].map((stat, i) => (
-            <motion.div 
-              key={i}
-              whileHover={{ y: -5 }}
-              className="p-4 sm:p-5 md:p-6 bg-white border border-gray-200 rounded-xl hover:shadow-lg transition-all"
-            >
-              <p className="text-2xl sm:text-3xl md:text-4xl font-black text-gray-900">{stat.number}</p>
-              <p className="text-xs sm:text-sm text-gray-600 mt-1 sm:mt-2">{stat.label}</p>
-            </motion.div>
-          ))}
+          <Link 
+            href={isAuthenticated ? "/dashboard" : "/signup"} 
+            className="w-full sm:w-auto bg-gray-900 text-white px-12 py-6 rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-105 transition-all shadow-2xl shadow-gray-900/20 group flex items-center justify-center gap-3"
+          >
+            {isAuthenticated ? 'Go to Dashboard' : 'Start Building Free'} <ArrowRight className="group-hover:translate-x-1 transition-transform" size={18} />
+          </Link>
+          <Link 
+            href="/vision" 
+            className="w-full sm:w-auto bg-white text-gray-600 px-12 py-6 rounded-2xl font-black text-sm uppercase tracking-widest border border-gray-100 hover:bg-gray-50 transition-all flex items-center justify-center"
+          >
+            Our Vision
+          </Link>
         </motion.div>
       </motion.div>
     </motion.section>
@@ -455,7 +438,7 @@ function Pricing() {
 
 // ============= CTA SECTION =============
 
-function CTASection() {
+function CTASection({ isAuthenticated }: { isAuthenticated: boolean }) {
   return (
     <section className="py-16 sm:py-20 md:py-28 px-4 sm:px-6 md:px-8 bg-gray-900 text-white relative overflow-hidden">
       <div className="absolute inset-0 opacity-10">
@@ -480,10 +463,10 @@ function CTASection() {
         
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
           <Link 
-            href="/signup"
+            href={isAuthenticated ? "/dashboard" : "/signup"}
             className="inline-flex items-center gap-2 bg-white hover:bg-gray-100 text-gray-900 px-8 py-4 rounded-xl font-bold text-lg transition-all shadow-lg hover:shadow-xl"
           >
-            Start Free Today
+            {isAuthenticated ? 'Go to Dashboard' : 'Start Free Today'}
             <motion.span animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
               →
             </motion.span>
@@ -497,45 +480,18 @@ function CTASection() {
 // ============= MAIN PAGE =============
 
 export default function LandingPage() {
-  const [user, setUser] = useState<any>(null)
-  const supabase = createClient()
-
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user) setUser(data.user)
-    })
-  }, [])
-
-  if (user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center pt-20">
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center">
-          <h1 className="h1 mb-4">Welcome back!</h1>
-          <Link href="/explore" className="inline-flex items-center gap-2 bg-gray-900 text-white px-8 py-4 rounded-xl font-semibold hover:bg-gray-800">
-            Go to Explore
-            <span>→</span>
-          </Link>
-        </motion.div>
-      </div>
-    )
-  }
+  const { user, loading } = useAuth()
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
-      {/* 
-          NOTE: We are using the global Navbar and Footer from layout.tsx.
-          If you want to customize the landing page nav specifically, 
-          you can add a local one here and hide the global one in layout.tsx using route matching.
-      */}
-
       {/* Sections */}
-      <HeroSection />
+      <HeroSection isAuthenticated={!!user} />
       <ScrollReveal />
       <HowItWorks />
       <Features />
       <Testimonials />
       <Pricing />
-      <CTASection />
+      <CTASection isAuthenticated={!!user} />
     </div>
   )
 }

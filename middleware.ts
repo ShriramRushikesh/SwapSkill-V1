@@ -22,7 +22,17 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  const protectedRoutes = ['/dashboard', '/post', '/profile/edit', '/onboarding']
+  const protectedRoutes = [
+    '/dashboard', 
+    '/post', 
+    '/profile/edit', 
+    '/onboarding',
+    '/explore',
+    '/mentorship-hub',
+    '/tpo',
+    '/settings',
+    '/admin'
+  ]
   const authRoutes = ['/login', '/signup']
   const path = request.nextUrl.pathname
 

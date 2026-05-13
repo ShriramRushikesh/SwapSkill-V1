@@ -80,7 +80,7 @@ export default function OnboardingPage() {
       verification_status: 'pending'
     }).eq('id', userId)
     toast.success('Profile complete! Welcome to SwapSkill.')
-    router.push('/dashboard')
+    router.push('/explore')
   }
 
   return (
@@ -281,7 +281,7 @@ export default function OnboardingPage() {
                     {loading ? 'Finalizing...' : <>Complete Onboarding <ArrowRight size={18} /></>}
                   </button>
                   <button 
-                    onClick={() => router.push('/dashboard')}
+                    onClick={() => router.push('/explore')}
                     className="w-full py-2 text-[10px] font-black text-gray-300 uppercase tracking-widest hover:text-gray-900 transition-colors"
                   >
                     Skip for now
