@@ -47,6 +47,7 @@ NEXT_PUBLIC_ADMIN_IDS=your-uuid
 3. Storage → Create 'avatars' bucket → Set to public
 4. RLS → Verify all policies are correct
 5. Backups → Set to daily
+6. API Settings → CORS Allowed Origins: Add your Vercel URL (https://swapskill.vercel.app) and localhost (http://localhost:3000)
 ```
 
 ### 4. Vercel Deployment
@@ -116,6 +117,14 @@ RESEND_API_KEY=...
 #    - Paste Client ID and Secret
 #    - Enable
 # 7. Test: Try Google OAuth on login page
+
+### 6.1 Supabase CORS Configuration
+To prevent `Load failed` or `CORS` errors in production:
+1. Go to Supabase Dashboard → Settings → API.
+2. Find the **CORS Allowed Origins** section.
+3. Add your production domain: `https://swapskill.com` (or your Vercel URL).
+4. Add `http://localhost:3000` for development.
+5. Click **Save**.
 ```
 
 ### 7. Email Setup (Resend)

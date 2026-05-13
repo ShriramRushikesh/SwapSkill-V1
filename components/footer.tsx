@@ -12,6 +12,7 @@ export default function Footer() {
         { label: 'Vision', href: '/vision' },
         { label: 'Careers', href: '/careers' },
         { label: 'Blog', href: '/blog' },
+        { label: 'Help Center', href: '/help' },
       ]
     },
     {
