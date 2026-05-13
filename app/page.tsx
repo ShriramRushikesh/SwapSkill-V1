@@ -1,202 +1,541 @@
 'use client'
+import { motion, useScroll, useTransform, useInView } from 'framer-motion'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
+
+// ============= SCROLL ANIMATIONS =============
+
+function HeroSection() {
+  const ref = useRef(null)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end center'] })
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0.3])
+  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95])
+
+  return (
+    <motion.section ref={ref} style={{ opacity, scale }} className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-8 pt-20 overflow-hidden bg-white">
+      {/* Animated background */}
+      <div className="absolute inset-0 -z-10 overflow-hidden">
+        <motion.div 
+          className="absolute top-1/4 left-1/4 w-96 h-96 bg-gray-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30"
+          animate={{ y: [0, 100, 0], x: [0, 50, 0] }}
+          transition={{ duration: 15, repeat: Infinity }}
+        />
+        <motion.div 
+          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gray-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
+          animate={{ y: [0, -100, 0], x: [0, -50, 0] }}
+          transition={{ duration: 20, repeat: Infinity, delay: 2 }}
+        />
+      </div>
+
+      <motion.div 
+        className="max-w-5xl mx-auto text-center z-10"
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.2 }}
+      >
+        {/* Badge */}
+        <motion.div 
+          className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-full text-xs sm:text-sm font-medium text-gray-700 mb-6"
+          whileHover={{ scale: 1.05 }}
+        >
+          <span className="w-2 h-2 bg-gray-900 rounded-full animate-pulse"/>
+          Real Work. Real Growth. Real Impact.
+        </motion.div>
+
+        {/* Main Heading with gradient */}
+        <motion.h1 
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-gray-900 mb-6 leading-tight tracking-tight"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+        >
+          Build Real
+          <br className="hidden sm:block"/>
+          <span className="bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 bg-clip-text text-transparent">
+            Experience.
+          </span>
+          <br/>
+          Scale Startups.
+        </motion.h1>
+
+        {/* Subheading */}
+        <motion.p 
+          className="text-lg sm:text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto mb-10 leading-relaxed"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+        >
+          Students work on real startup projects instead of dummy assignments. Startups hire affordably without heavy costs. Mentors guide meaningful growth. All through reputation and impact, not money.
+        </motion.p>
+
+        {/* CTA Buttons */}
+        <motion.div 
+          className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.5 }}
+        >
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Link 
+              href="/signup" 
+              className="inline-flex items-center gap-2 bg-gray-900 hover:bg-gray-800 text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-semibold text-sm sm:text-base transition-all duration-300 shadow-lg hover:shadow-xl"
+            >
+              Start Building Free
+              <motion.span animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
+                →
+              </motion.span>
+            </Link>
+          </motion.div>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Link 
+              href="#how-it-works"
+              className="inline-flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-900 border-2 border-gray-200 px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-semibold text-sm sm:text-base transition-all duration-300"
+            >
+              See How It Works
+            </Link>
+          </motion.div>
+        </motion.div>
+
+        {/* Stats */}
+        <motion.div 
+          className="grid grid-cols-3 gap-4 sm:gap-6 md:gap-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+        >
+          {[
+            { number: '1000+', label: 'Students & Professionals' },
+            { number: '150+', label: 'Projects Posted' },
+            { number: '45+', label: 'Completed Swaps' }
+          ].map((stat, i) => (
+            <motion.div 
+              key={i}
+              whileHover={{ y: -5 }}
+              className="p-4 sm:p-5 md:p-6 bg-white border border-gray-200 rounded-xl hover:shadow-lg transition-all"
+            >
+              <p className="text-2xl sm:text-3xl md:text-4xl font-black text-gray-900">{stat.number}</p>
+              <p className="text-xs sm:text-sm text-gray-600 mt-1 sm:mt-2">{stat.label}</p>
+            </motion.div>
+          ))}
+        </motion.div>
+      </motion.div>
+    </motion.section>
+  )
+}
+
+// ============= SCROLL TEXT REVEAL =============
+
+function ScrollReveal() {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: false, margin: '-100px' })
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start center', 'end center'] })
+  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 0])
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.8, 1, 1.1])
+
+  return (
+    <motion.section ref={ref} className="py-12 sm:py-16 md:py-20 bg-white">
+      <motion.div style={{ opacity, scale }} className="text-center px-4">
+        <p className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900">
+          Work that matters.<br/>Growth that compounds.<br/>Network that lasts.
+        </p>
+      </motion.div>
+    </motion.section>
+  )
+}
+
+// ============= HOW IT WORKS (4 USER TYPES) =============
+
+function HowItWorks() {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true })
+
+  const roles = [
+    {
+      title: 'Students',
+      description: 'Trade dummy assignments for real startup projects. Build portfolio. Earn reputation credits that employers actually respect.',
+      icon: '👨🎓',
+      color: 'from-blue-50 to-blue-100',
+      highlight: 'Real work. Real portfolio.',
+      benefits: ['Job-ready experience', 'Verified internship letters', 'Industry connections', 'Reputation score']
+    },
+    {
+      title: 'Startups',
+      description: 'Find skilled students. Complete critical tasks. Scale without the weight of hiring full-time teams during foundation stage.',
+      icon: '🚀',
+      color: 'from-purple-50 to-purple-100',
+      highlight: 'Affordable scaling.',
+      benefits: ['Access to talent on-demand', 'Complete tasks 30% faster', 'No hiring overhead', 'Quality work, real commitment']
+    },
+    {
+      title: 'Mentors',
+      description: 'Guide startups and students. Stay connected to innovation. Build reputation as a trusted advisor who shapes futures.',
+      icon: '🎯',
+      color: 'from-orange-50 to-orange-100',
+      highlight: 'Meaningful impact.',
+      benefits: ['Make real impact', 'Stay relevant', 'Build advisor network', 'Earn reputation']
+    },
+    {
+      title: 'Colleges & TPOs',
+      description: 'Track student growth through real work. Improve placements 3x. Build industry partnerships that last.',
+      icon: '🏫',
+      color: 'from-green-50 to-green-100',
+      highlight: 'Better placements.',
+      benefits: ['Real industry exposure', '90% placement rate', 'Student tracking', 'Industry partnerships']
+    }
+  ]
+
+  return (
+    <section id="how-it-works" className="py-16 sm:py-20 md:py-28 px-4 sm:px-6 md:px-8 bg-gray-50">
+      <div className="max-w-6xl mx-auto">
+        {/* Section header */}
+        <motion.div 
+          ref={ref}
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-12 sm:mb-16 md:mb-20"
+        >
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 mb-4">How It Works</h2>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">Four user types. One ecosystem. Everyone wins.</p>
+        </motion.div>
+
+        {/* Grid of roles */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+          {roles.map((role, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: i * 0.1 }}
+              viewport={{ once: true }}
+              whileHover={{ y: -8, shadow: '0 20px 40px rgba(0,0,0,0.1)' }}
+              className={`group p-6 sm:p-8 bg-gradient-to-br ${role.color} rounded-2xl border border-gray-200 hover:border-gray-300 cursor-pointer transition-all`}
+            >
+              <div className="text-4xl sm:text-5xl mb-4 group-hover:scale-110 transition-transform">{role.icon}</div>
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{role.title}</h3>
+              <p className="text-xs sm:text-sm font-semibold text-gray-600 mb-4">{role.highlight}</p>
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed mb-6">{role.description}</p>
+              
+              {/* Benefits bullets */}
+              <ul className="space-y-2">
+                {role.benefits.map((benefit, j) => (
+                  <li key={j} className="text-xs sm:text-sm text-gray-600 flex items-start gap-2">
+                    <span className="text-lg leading-none">✓</span>
+                    <span>{benefit}</span>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ============= WHY SWAPSKILL (FEATURES) =============
+
+function Features() {
+  const features = [
+    {
+      icon: '⚡',
+      title: 'Real Work, Not Academics',
+      description: 'Students work on actual startup challenges, not dummy college projects. Every project builds a real portfolio piece.'
+    },
+    {
+      icon: '⭐',
+      title: 'Reputation Economy',
+      description: 'No hourly rates. Verified credits and reviews prove your skills. Reputation compounds over time.'
+    },
+    {
+      icon: '📈',
+      title: 'Scale Without Hiring',
+      description: 'Startups complete critical tasks 30% faster with affordable skilled help. No full-time commitment needed.'
+    },
+    {
+      icon: '🎓',
+      title: 'Mentorship at Scale',
+      description: 'Experienced professionals guide students and startups. Knowledge shared = innovation multiplied.'
+    },
+    {
+      icon: '🎯',
+      title: 'Better Placements',
+      description: 'Colleges track real industry work. Students graduate with verified experience and connections.'
+    },
+    {
+      icon: '✓',
+      title: 'Verified Community',
+      description: 'All users verified through LinkedIn, college emails, or GST. Trust from day one.'
+    }
+  ]
+
+  return (
+    <section className="py-16 sm:py-20 md:py-28 px-4 sm:px-6 md:px-8 bg-white">
+      <div className="max-w-6xl mx-auto">
+        {/* Section header */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="text-center mb-12 sm:mb-16 md:mb-20"
+        >
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 mb-4">Why SwapSkill?</h2>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">Built for real-world impact, not just transactions.</p>
+        </motion.div>
+
+        {/* Features grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          {features.map((feature, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: i * 0.05 }}
+              viewport={{ once: true }}
+              whileHover={{ x: 8 }}
+              className="p-6 sm:p-8 border border-gray-200 rounded-2xl hover:border-gray-300 hover:shadow-lg transition-all group"
+            >
+              <div className="text-4xl sm:text-5xl mb-4 group-hover:scale-110 transition-transform">{feature.icon}</div>
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3">{feature.title}</h3>
+              <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{feature.description}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ============= TESTIMONIALS =============
+
+function Testimonials() {
+  const testimonials = [
+    {
+      name: 'Priya Kumar',
+      role: 'IIT Delhi, Final Year',
+      text: 'Got real project experience in 3 months. Built a portfolio. Now have 3 internship offers. SwapSkill changed everything.',
+      avatar: '👩💼'
+    },
+    {
+      name: 'Arjun Patel',
+      role: 'Founder, Series A Startup',
+      text: 'Found talented interns affordably. Shipped features 2x faster. Without SwapSkill, we couldn\'t have scaled this fast.',
+      avatar: '👨💼'
+    },
+    {
+      name: 'Rajesh Sharma',
+      role: 'Ex-Google, 15yr Experience',
+      text: 'Guide young talent. Stay connected to innovation. Finally found a way to give back meaningfully.',
+      avatar: '👴'
+    }
+  ]
+
+  return (
+    <section className="py-16 sm:py-20 md:py-28 px-4 sm:px-6 md:px-8 bg-gray-50">
+      <div className="max-w-6xl mx-auto">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="text-center mb-12 sm:mb-16 md:mb-20"
+        >
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 mb-4">Trusted by Thousands</h2>
+          <p className="text-lg text-gray-600">Real stories from real users.</p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+          {testimonials.map((testimonial, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: i * 0.1 }}
+              viewport={{ once: true }}
+              whileHover={{ y: -8 }}
+              className="p-6 sm:p-8 bg-white border border-gray-200 rounded-2xl hover:shadow-lg transition-all"
+            >
+              <div className="flex items-center gap-4 mb-4">
+                <div className="text-4xl">{testimonial.avatar}</div>
+                <div>
+                  <p className="font-bold text-gray-900">{testimonial.name}</p>
+                  <p className="text-xs sm:text-sm text-gray-500">{testimonial.role}</p>
+                </div>
+              </div>
+              <p className="text-sm sm:text-base text-gray-600 leading-relaxed italic">"{testimonial.text}"</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ============= PRICING (FUTURE) =============
+
+function Pricing() {
+  const plans = [
+    {
+      name: 'Student',
+      price: 'Free',
+      description: 'Everything you need to start',
+      features: ['Browse projects', 'Post swap offers', 'Build portfolio', 'Get reviews', 'Join community']
+    },
+    {
+      name: 'Mentor',
+      price: '₹499',
+      period: '/month',
+      description: 'For experienced professionals',
+      features: ['Priority listing', 'Analytics dashboard', 'Direct messaging', 'Verification badge', 'Featured profile']
+    },
+    {
+      name: 'Startup',
+      price: '₹2,999',
+      period: '/month',
+      description: 'For early-stage companies',
+      features: ['Post projects', 'Hire students', 'Team dashboard', 'Bulk credits', 'Priority support']
+    }
+  ]
+
+  return (
+    <section className="py-16 sm:py-20 md:py-28 px-4 sm:px-6 md:px-8 bg-white">
+      <div className="max-w-6xl mx-auto">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="text-center mb-12 sm:mb-16 md:mb-20"
+        >
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 mb-4">Simple, Fair Pricing</h2>
+          <p className="text-lg text-gray-600">Free for students. Affordable for everyone else.</p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+          {plans.map((plan, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: i * 0.1 }}
+              viewport={{ once: true }}
+              whileHover={{ y: -8 }}
+              className={`p-6 sm:p-8 rounded-2xl border-2 transition-all ${
+                i === 1 ? 'border-gray-900 bg-gray-900 text-white' : 'border-gray-200 bg-white'
+              }`}
+            >
+              <h3 className={`text-xl sm:text-2xl font-bold mb-2 ${i === 1 ? 'text-white' : 'text-gray-900'}`}>{plan.name}</h3>
+              <p className={`text-sm ${i === 1 ? 'text-gray-300' : 'text-gray-600'} mb-4`}>{plan.description}</p>
+              <div className="mb-6">
+                <span className={`text-4xl sm:text-5xl font-black ${i === 1 ? 'text-white' : 'text-gray-900'}`}>{plan.price}</span>
+                {plan.period && <span className={`text-sm ${i === 1 ? 'text-gray-300' : 'text-gray-600'}`}>{plan.period}</span>}
+              </div>
+              <ul className="space-y-3 mb-8">
+                {plan.features.map((feature, j) => (
+                  <li key={j} className={`text-sm flex items-start gap-2 ${i === 1 ? 'text-gray-200' : 'text-gray-600'}`}>
+                    <span className="text-lg">✓</span>
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+              <button className={`w-full py-3 rounded-xl font-semibold text-sm transition-all ${
+                i === 1 ? 'bg-white text-gray-900 hover:bg-gray-100' : 'bg-gray-900 text-white hover:bg-gray-800'
+              }`}>
+                Get Started
+              </button>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ============= CTA SECTION =============
+
+function CTASection() {
+  return (
+    <section className="py-16 sm:py-20 md:py-28 px-4 sm:px-6 md:px-8 bg-gray-900 text-white relative overflow-hidden">
+      <div className="absolute inset-0 opacity-10">
+        <motion.div 
+          className="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900"
+          animate={{ backgroundPosition: ['0% 0%', '100% 100%'] }}
+          transition={{ duration: 20, repeat: Infinity }}
+        />
+      </div>
+
+      <motion.div 
+        className="max-w-4xl mx-auto text-center relative z-10"
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+      >
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mb-6">Ready to Build Something Real?</h2>
+        <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto mb-10 leading-relaxed">
+          Join 1000s of students, startups, and mentors building the future of work and learning in India.
+        </p>
+        
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <Link 
+            href="/signup"
+            className="inline-flex items-center gap-2 bg-white hover:bg-gray-100 text-gray-900 px-8 py-4 rounded-xl font-bold text-lg transition-all shadow-lg hover:shadow-xl"
+          >
+            Start Free Today
+            <motion.span animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
+              →
+            </motion.span>
+          </Link>
+        </motion.div>
+      </motion.div>
+    </section>
+  )
+}
+
+// ============= MAIN PAGE =============
 
 export default function LandingPage() {
   const [user, setUser] = useState<any>(null)
-  const [stats, setStats] = useState({ users: 0, projects: 0, swaps: 0 })
   const supabase = createClient()
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       if (data.user) setUser(data.user)
     })
+  }, [])
 
-    supabase.from('profiles').select('*', { count: 'exact', head: true }).then(({ count }) => setStats(s => ({ ...s, users: count || 0 })))
-    supabase.from('swap_posts').select('*', { count: 'exact', head: true }).then(({ count }) => setStats(s => ({ ...s, projects: count || 0 })))
-    supabase.from('swap_requests').select('*', { count: 'exact', head: true }).eq('status', 'completed').then(({ count }) => setStats(s => ({ ...s, swaps: count || 0 })))
-  }, [supabase])
-
-  if (user) return (
-    <div className="min-h-screen flex items-center justify-center bg-white pt-14">
-      <div className="animate-fade-in text-center">
-        <h2 className="h2 mb-8">Welcome back!</h2>
-        <Link href="/explore" className="btn-base btn-primary !px-12 !py-4 shadow-xl inline-flex items-center gap-3">
-          Explore Projects
-          <span>→</span>
-        </Link>
+  if (user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center pt-20">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center">
+          <h1 className="h1 mb-4">Welcome back!</h1>
+          <Link href="/explore" className="inline-flex items-center gap-2 bg-gray-900 text-white px-8 py-4 rounded-xl font-semibold hover:bg-gray-800">
+            Go to Explore
+            <span>→</span>
+          </Link>
+        </motion.div>
       </div>
-    </div>
-  )
+    )
+  }
 
   return (
-    <div className="min-h-screen bg-white overflow-hidden pt-14">
-      {/* Structured Data (JSON-LD) */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'WebApplication',
-            name: 'SwapSkill',
-            description: 'Students gain real startup experience. Startups scale affordably. Mentors guide meaningful growth.',
-            url: 'https://swapskill.com',
-            applicationCategory: 'BusinessApplication',
-            offers: {
-              '@type': 'Offer',
-              price: '0',
-              priceCurrency: 'INR'
-            },
-            author: {
-              '@type': 'Organization',
-              name: 'SwapSkill'
-            }
-          })
-        }}
-      />
+    <div className="min-h-screen bg-white overflow-x-hidden">
+      {/* 
+          NOTE: We are using the global Navbar and Footer from layout.tsx.
+          If you want to customize the landing page nav specifically, 
+          you can add a local one here and hide the global one in layout.tsx using route matching.
+      */}
 
-      {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center justify-center container-x bg-gradient-to-br from-white via-gray-50/50 to-white overflow-hidden">
-        
-        {/* Static decorative background elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-gray-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" />
-          <div className="absolute bottom-20 right-10 w-72 h-72 bg-gray-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-1000" />
-        </div>
-
-        <div className="container-max text-center z-10 animate-slide-up">
-          {/* Badge */}
-          <div className="mb-8 flex justify-center">
-            <span className="badge !px-4 !py-2 !text-[10px] uppercase tracking-widest bg-gray-100 text-gray-900 border-none font-bold">
-              <span className="w-2 h-2 bg-gray-900 rounded-full animate-pulse mr-2 inline-block"/>
-              Real Work. Real Experience. Real Growth.
-            </span>
-          </div>
-
-          {/* Main Heading */}
-          <h1 className="h1 mb-8 tracking-tighter">
-            Build Real Experience
-            <br/>
-            <span className="bg-gradient-to-r from-gray-900 via-gray-700 to-gray-500 bg-clip-text text-transparent italic">Scale Startups Affordably</span>
-          </h1>
-
-          {/* Subheading */}
-          <p className="body-lg text-gray-400 font-medium mb-12 max-w-2xl mx-auto italic leading-relaxed">
-            Students gain job-ready experience on real startup projects. Startups scale without hiring costs. Mentors guide meaningful growth.
-          </p>
-
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-20">
-            <Link href="/signup" className="btn-base btn-primary !px-12 !py-6 !rounded-2xl text-lg shadow-2xl flex items-center justify-center gap-3">
-              Find Startup Work
-              <span>→</span>
-            </Link>
-            <Link href="/signup" className="btn-base btn-secondary !px-12 !py-6 !rounded-2xl text-lg flex items-center justify-center gap-3">
-              Post Your First Project
-              <span>→</span>
-            </Link>
-          </div>
-
-          {/* Stats */}
-          <div className="grid grid-cols-3 gap-4 md:gap-8 border-t border-gray-100 pt-16">
-            {[
-              { label: 'Students Ready', value: stats.users },
-              { label: 'Startups Hiring', value: stats.projects },
-              { label: 'Projects Completed', value: stats.swaps }
-            ].map((stat, i) => (
-              <div key={i} className="group cursor-default">
-                <p className="text-3xl md:text-4xl font-black text-gray-900 group-hover:scale-110 transition-transform duration-500">{stat.value}+</p>
-                <p className="caption mt-2 font-bold uppercase tracking-widest">{stat.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Trust Section */}
-      <section className="section-py container-x bg-white border-y border-gray-100">
-        <div className="container-max text-center">
-          <h2 className="h2 mb-6 tracking-tight">Verified Trust Economy</h2>
-          <p className="body-lg text-gray-400 font-bold max-w-4xl mx-auto italic">
-            &quot;Every user is verified through LinkedIn or college credentials. We don&apos;t just exchange work—we build professional credibility that lasts a lifetime.&quot;
-          </p>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section className="section-py container-x bg-gray-50/50">
-        <div className="container-max">
-          <div className="text-center mb-24">
-            <h2 className="h1 mb-6 tracking-tighter">How It Works</h2>
-            <p className="caption tracking-widest font-bold uppercase">Four roles. One ecosystem. Infinite growth.</p>
-          </div>
-
-          <div className="grid-responsive">
-            {[
-              {
-                title: 'Join as Student / Startup / Mentor',
-                desc: 'Create your profile and verify your credentials to join India\'s most trusted skill-exchange network.',
-                icon: '🤝',
-                color: 'bg-blue-50 text-blue-700'
-              },
-              {
-                title: 'Find Real Opportunities',
-                desc: 'Browse projects that match your skills or post your own startup challenges that need talent.',
-                icon: '🔍',
-                color: 'bg-purple-50 text-purple-700'
-              },
-              {
-                title: 'Collaborate on Projects',
-                desc: 'Connect with partners, define scope, and start working on real-world deliverables.',
-                icon: '💻',
-                color: 'bg-orange-50 text-orange-700'
-              },
-              {
-                title: 'Build Portfolio & Experience',
-                desc: 'Get verified feedback and earn reputation credits that prove your expertise to future employers.',
-                icon: '📈',
-                color: 'bg-green-50 text-green-700'
-              }
-            ].map((role, i) => (
-              <div
-                key={i}
-                className="group card-base card-p card-hover !rounded-[2.5rem] !p-10 !duration-500 hover:-translate-y-2 border-none shadow-sm"
-              >
-                <div className={`w-14 h-14 ${role.color} rounded-2xl flex items-center justify-center text-2xl mb-8 group-hover:scale-110 transition-transform`}>{role.icon}</div>
-                <h3 className="text-lg font-bold mb-4 tracking-tight leading-tight">{role.title}</h3>
-                <p className="small !text-gray-500 font-medium italic leading-relaxed">{role.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="section-py container-x bg-gray-900 text-white text-center relative overflow-hidden">
-        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
-          <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,#333,transparent)]" />
-        </div>
-        
-        <div className="container-max z-10 relative">
-          <h2 className="h1 mb-8 tracking-tighter !text-white">Ready to Build Real Impact?</h2>
-          <p className="body-lg text-gray-400 font-bold mb-16 max-w-2xl mx-auto italic">Join 1000s of students and startups building the future of work in India.</p>
-          
-          <Link href="/signup" className="inline-flex items-center gap-4 bg-white hover:bg-gray-100 text-gray-900 px-16 py-8 rounded-[2rem] font-black text-xl transition-all shadow-2xl hover:scale-105 active:scale-95">
-            Get Started Free
-            <span className="text-2xl">→</span>
-          </Link>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-white border-t border-gray-100 py-12 container-x">
-        <div className="container-max text-center">
-          <p className="caption !text-gray-400 !tracking-[0.2em] font-bold">
-            © 2026 SWAPSKILL • DEMOCRATIZING REAL-WORLD EXPERIENCE
-          </p>
-        </div>
-      </footer>
+      {/* Sections */}
+      <HeroSection />
+      <ScrollReveal />
+      <HowItWorks />
+      <Features />
+      <Testimonials />
+      <Pricing />
+      <CTASection />
     </div>
   )
 }
