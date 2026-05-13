@@ -1,0 +1,53 @@
+
+> swapskill@0.1.0 build
+> next build
+
+  ▲ Next.js 14.2.15
+  - Environments: .env.local
+
+   Creating an optimized production build ...
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: Unable to snapshot resolve dependencies
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+
+Failed to compile.
+
+./app/(auth)/forgot-password/page.tsx
+39:53  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+48:119  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./app/(auth)/login/page.tsx
+95:5  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./app/(main)/dashboard/dashboard-client.tsx
+122:2  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+144:68  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+144:82  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+197:63  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./app/(main)/dashboard/notifications-realtime.tsx
+25:6  Warning: React Hook useEffect has a missing dependency: 'supabase'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./app/(main)/explore/explore-client.tsx
+60:2  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./app/(main)/post/page.tsx
+28:5  Warning: React Hook useEffect has missing dependencies: 'router' and 'supabase.auth'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+
+./app/(main)/profile/[id]/profile-client.tsx
+29:24  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./app/(main)/profile/edit/page.tsx
+34:5  Warning: React Hook useEffect has missing dependencies: 'router' and 'supabase'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+
+./app/onboarding/avatar-upload.tsx
+40:11  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./app/onboarding/page.tsx
+32:5  Warning: React Hook useEffect has missing dependencies: 'router' and 'supabase'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/navbar.tsx
+58:5  Warning: React Hook useEffect has a missing dependency: 'supabase'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+143:2  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
